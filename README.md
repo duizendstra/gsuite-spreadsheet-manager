@@ -1,4 +1,4 @@
-g suite group manager
+g suite spreadsheet manager
 =========
 
 Wrapper for the Google spreadsheet API v4
