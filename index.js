@@ -55,7 +55,6 @@ function gsuiteSpreadsheetManager(mainSpecs) {
 
     function batchClear(specs) {
         var spreadsheetId = specs.spreadsheetId;
-        var batchUpdateRequest;
         return new Promise(function (resolve, reject) {
             sheets.spreadsheets.values.batchClear({
                 auth: auth,
@@ -63,7 +62,7 @@ function gsuiteSpreadsheetManager(mainSpecs) {
                 resource: {
                     "ranges": [
                         specs.ranges
-                    ],
+                    ]
                 }
             }, function (err, response) {
                 if (err) {
