@@ -29,6 +29,30 @@ function gsuiteSpreadsheetManager(mainSpecs) {
         });
     }
 
+    function append(specs) {
+        var spreadsheetId = specs.spreadsheetId;
+        var range = specs.range;
+        var values = specs.values;
+        return new Promise(function (resolve, reject) {
+            sheets.spreadsheets.values.append({
+                auth: auth,
+                spreadsheetId: spreadsheetId,
+                range: range,
+                valueInputOption: "USER_ENTERED",
+                resource: {
+                    values: values
+                }
+            }, function (err) {
+                if (err) {
+                    reject("The Spreadsheet API returned an error: " + err);
+                    return;
+                }
+                resolve();
+                return;
+            });
+        });
+    }
+
     function batchClear(specs) {
         var spreadsheetId = specs.spreadsheetId;
         var batchUpdateRequest;
@@ -99,7 +123,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
         update: update,
         batchUpdate: batchUpdate,
         get: get,
-        batchClear: batchClear
+        batchClear: batchClear,
+        append: append
     };
 }
 
