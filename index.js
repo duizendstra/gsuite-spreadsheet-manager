@@ -5,116 +5,138 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     var auth;
     var sheets = google.sheets("v4");
 
-    function update(specs) {
-        var spreadsheetId = specs.spreadsheetId;
-        var range = specs.range;
-        var values = specs.values;
-        return new Promise(function (resolve, reject) {
-            sheets.spreadsheets.values.update({
-                auth: auth,
-                spreadsheetId: spreadsheetId,
-                range: range,
-                valueInputOption: "USER_ENTERED",
-                resource: {
-                    values: values
+    function buildRequest(specs) {
+        var request = {
+            auth: auth
+        };
+
+        if (specs.fields) {
+            request.fields = specs.fields;
+        }
+
+        if (specs.backoff) {
+            request.backoff = request;
+        }
+
+        if (specs.q) {
+            request.q = specs.q;
+        }
+
+        if (specs.pageToken) {
+            request.pageToken = specs.pageToken;
+        }
+
+        return request;
+    }
+
+    function doRequest(specs, request, apiCall) {
+        return function () {
+            return new Promise(function (resolve, reject) {
+                if (specs.throttle) {
+                    return specs.throttle().then(function () {
+                        apiCall(request, function (err, response) {
+                            if (err) {
+                                return reject(err);
+                            }
+                            return resolve(response);
+                        });
+                    });
                 }
-            }, function (err) {
-                if (err) {
-                    reject("The Spreadsheet API returned an error: " + err);
-                    return;
-                }
-                resolve();
-                return;
+                return apiCall(request, function (err, response) {
+                    if (err) {
+                        return reject(err);
+                    }
+                    return resolve(response);
+                });
             });
-        });
+        };
+    }
+
+    function update(specs) {
+        var request = buildRequest(specs);
+        var apiCall = sheets.spreadsheets.values.update;
+
+        request.spreadsheetId = specs.spreadsheetId;
+        request.range = specs.range;
+        request.valueInputOption = "USER_ENTERED";
+        request.resource = {
+            values: specs.values
+        };
+
+        if (specs.backoff !== undefined) {
+            return specs.backoff({
+                promise: doRequest(specs, request, apiCall)
+            });
+        }
+        return doRequest(specs, request, apiCall)();
     }
 
     function append(specs) {
-        var spreadsheetId = specs.spreadsheetId;
-        var range = specs.range;
-        var values = specs.values;
-        return new Promise(function (resolve, reject) {
-            sheets.spreadsheets.values.append({
-                auth: auth,
-                spreadsheetId: spreadsheetId,
-                range: range,
-                valueInputOption: "USER_ENTERED",
-                resource: {
-                    values: values
-                }
-            }, function (err) {
-                if (err) {
-                    reject("The Spreadsheet API returned an error: " + err);
-                    return;
-                }
-                resolve();
-                return;
+        var request = buildRequest(specs);
+        var apiCall = sheets.spreadsheets.values.append;
+
+        request.spreadsheetId = specs.spreadsheetId;
+        request.range = specs.range;
+        request.valueInputOption = "USER_ENTERED";
+        request.resource = {
+            values: specs.values
+        };
+        if (specs.backoff !== undefined) {
+            return specs.backoff({
+                promise: doRequest(specs, request, apiCall)
             });
-        });
+        }
+        return doRequest(specs, request, apiCall)();
     }
 
     function batchClear(specs) {
-        var spreadsheetId = specs.spreadsheetId;
-        return new Promise(function (resolve, reject) {
-            sheets.spreadsheets.values.batchClear({
-                auth: auth,
-                spreadsheetId: spreadsheetId,
-                resource: {
-                    "ranges": [
-                        specs.ranges
-                    ]
-                }
-            }, function (err, response) {
-                if (err) {
-                    reject("The Spreadsheet API returned an error: " + err);
-                    return;
-                }
-                resolve(response);
-                return;
+        var request = buildRequest(specs);
+        var apiCall = sheets.spreadsheets.values.batchClear;
+        request.spreadsheetId = specs.spreadsheetId;
+        request.resource = {
+            "ranges": [
+                specs.ranges
+            ]
+        };
+
+        if (specs.backoff !== undefined) {
+            return specs.backoff({
+                promise: doRequest(specs, request, apiCall)
             });
-        });
+        }
+        return doRequest(specs, request, apiCall)();
     }
 
     function batchUpdate(specs) {
-        var spreadsheetId = specs.spreadsheetId;
-        var batchUpdateRequest = {
+        var request = buildRequest(specs);
+        var apiCall = sheets.spreadsheets.values.batchUpdate;
+
+        request.spreadsheetId = specs.spreadsheetId;
+        request.resource = {
             ranges: specs.ranges
         };
 
-        return new Promise(function (resolve, reject) {
-            sheets.spreadsheets.batchUpdate({
-                auth: auth,
-                spreadsheetId: spreadsheetId,
-                resource: batchUpdateRequest
-            }, function (err, response) {
-                if (err) {
-                    reject("The Spreadsheet API returned an error: " + err);
-                    return;
-                }
-                resolve(response);
-                return;
+        if (specs.backoff !== undefined) {
+            return specs.backoff({
+                promise: doRequest(specs, request, apiCall)
             });
-        });
+        }
+        return doRequest(specs, request, apiCall)();
     }
 
-
     function get(specs) {
-        var spreadsheetId = specs.spreadsheetId;
-        var range = specs.range;
-        return new Promise(function (resolve, reject) {
-            sheets.spreadsheets.values.get({
-                auth: auth,
-                spreadsheetId: spreadsheetId,
-                range: range
-            }, function (err, response) {
-                if (err) {
-                    reject("The Spreadsheet API returned an error: " + err);
-                    return;
-                }
-                resolve(response);
-                return;
+        var request = buildRequest(specs);
+        var apiCall = sheets.spreadsheets.values.get;
+
+        request.spreadsheetId = specs.spreadsheetId;
+        request.range = specs.range;
+
+        if (specs.backoff !== undefined) {
+            return specs.backoff({
+                promise: doRequest(specs, request, apiCall)
             });
-        });
+        }
+        return doRequest(specs, request, apiCall)();
     }
 
     auth = mainSpecs.auth;
