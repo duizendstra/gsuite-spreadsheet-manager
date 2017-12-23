@@ -1,12 +1,12 @@
-var google = require("googleapis");
+let google = require("googleapis");
 
 function gsuiteSpreadsheetManager(mainSpecs) {
     "use strict";
-    var auth;
-    var sheets = google.sheets("v4");
+    let auth;
+    let sheets = google.sheets("v4");
 
     function buildRequest(specs) {
-        var request = {
+        let request = {
             auth: auth
         };
 
@@ -53,8 +53,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     }
 
     function update(specs) {
-        var request = buildRequest(specs);
-        var apiCall = sheets.spreadsheets.values.update;
+        let request = buildRequest(specs);
+        let apiCall = sheets.spreadsheets.values.update;
 
         request.spreadsheetId = specs.spreadsheetId;
         request.range = specs.range;
@@ -72,8 +72,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     }
 
     function append(specs) {
-        var request = buildRequest(specs);
-        var apiCall = sheets.spreadsheets.values.append;
+        let request = buildRequest(specs);
+        let apiCall = sheets.spreadsheets.values.append;
 
         request.spreadsheetId = specs.spreadsheetId;
         request.range = specs.range;
@@ -90,8 +90,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     }
 
     function batchClear(specs) {
-        var request = buildRequest(specs);
-        var apiCall = sheets.spreadsheets.values.batchClear;
+        let request = buildRequest(specs);
+        let apiCall = sheets.spreadsheets.values.batchClear;
         request.spreadsheetId = specs.spreadsheetId;
         request.resource = {
             "ranges": [
@@ -108,8 +108,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     }
 
     function batchUpdate(specs) {
-        var request = buildRequest(specs);
-        var apiCall = sheets.spreadsheets.values.batchUpdate;
+        let request = buildRequest(specs);
+        let apiCall = sheets.spreadsheets.values.batchUpdate;
 
         request.spreadsheetId = specs.spreadsheetId;
         request.resource = {
@@ -125,8 +125,8 @@ function gsuiteSpreadsheetManager(mainSpecs) {
     }
 
     function get(specs) {
-        var request = buildRequest(specs);
-        var apiCall = sheets.spreadsheets.values.get;
+        let request = buildRequest(specs);
+        let apiCall = sheets.spreadsheets.values.get;
 
         request.spreadsheetId = specs.spreadsheetId;
         request.range = specs.range;

@@ -1,6 +1,6 @@
 {
   "name": "gsuite-spreadsheet-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wrapper for the G suite spreadsheet API v4",
   "main": "index.js",
   "dependencies": {
